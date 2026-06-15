@@ -46,6 +46,7 @@ class JobMatchSchema(BaseModel):
     missing_skills: List[str]
     matched_skills: List[str]
     job_board: str
+    location: Optional[str] = None
 
 class JobMatchResponse(BaseModel):
     id: int
@@ -56,6 +57,7 @@ class JobMatchResponse(BaseModel):
     missing_skills: List[str]
     matched_skills: List[str]
     job_board: str
+    location: Optional[str] = None
     created_at: datetime
 
     class Config:

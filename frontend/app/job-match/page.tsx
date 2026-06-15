@@ -20,6 +20,7 @@ import { getJobMatches } from "@/utils/api";
 interface JobMatch {
   job_title: string;
   company: string;
+  location?: string;
   match_score: number;
   missing_skills: string[];
   matched_skills: string[];
@@ -28,6 +29,7 @@ interface JobMatch {
 
 export default function JobMatchPage() {
   const [resumeId, setResumeId] = useState<number | null>(null);
+  const [location, setLocation] = useState("All");
   const [matches, setMatches] = useState<JobMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +50,7 @@ export default function JobMatchPage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await getJobMatches(resumeId!);
+        const data = await getJobMatches(resumeId!, location);
         setMatches(data);
       } catch (err: any) {
         setError(err.message || "Failed to match jobs.");
@@ -57,7 +59,7 @@ export default function JobMatchPage() {
       }
     }
     runMatcher();
-  }, [resumeId]);
+  }, [resumeId, location]);
 
   if (!resumeId) {
     return (
@@ -124,13 +126,31 @@ export default function JobMatchPage() {
             Extracts resume skills and compares profiles against global board listings.
           </p>
         </div>
-        <Link
-          href="/tailor"
-          className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 border border-slate-800 text-slate-300 font-semibold rounded-xl hover:border-slate-700 text-xs transition-colors"
-        >
-          <span>Next: Tailor Resume & CL</span>
-          <ArrowRight className="h-4 w-4" />
-        </Link>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Region:</span>
+            <select
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="bg-slate-900 border border-slate-800 focus:border-indigo-500/50 outline-none rounded-xl px-3 py-2 text-xs font-bold text-white cursor-pointer"
+            >
+              <option value="All">🌍 All Countries</option>
+              <option value="USA">🇺🇸 United States</option>
+              <option value="China">🇨🇳 China</option>
+              <option value="India">🇮🇳 India</option>
+              <option value="Germany">🇩🇪 Germany</option>
+              <option value="UK">🇬🇧 United Kingdom</option>
+              <option value="Japan">🇯🇵 Japan</option>
+            </select>
+          </div>
+          <Link
+            href="/tailor"
+            className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 border border-slate-800 text-slate-300 font-semibold rounded-xl hover:border-slate-700 text-xs transition-colors"
+          >
+            <span>Next: Tailor Resume & CL</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -150,12 +170,19 @@ export default function JobMatchPage() {
             <div className="flex flex-col gap-4">
               {highMatches.map((m, idx) => (
                 <div key={idx} className="p-4 bg-slate-950/60 rounded-xl border border-slate-900/50 space-y-3">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">{m.company}</h4>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between w-full">
+                        <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{m.company}</h4>
+                        {m.location && (
+                          <span className="text-[9px] text-indigo-400 font-bold bg-indigo-500/5 border border-indigo-500/10 px-2 py-0.5 rounded">
+                            {m.location}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm font-bold text-white mt-0.5">{m.job_title}</p>
                     </div>
-                    <span className="text-xs font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+                    <span className="text-xs font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg ml-2 shrink-0">
                       {m.match_score}% Match
                     </span>
                   </div>
@@ -203,7 +230,11 @@ export default function JobMatchPage() {
                         </span>
                       </div>
                       <h3 className="text-base font-bold text-white">{m.job_title}</h3>
-                      <p className="text-xs text-slate-400 font-medium">{m.company}</p>
+                      <div className="flex items-center gap-2 text-xs text-slate-400">
+                        <span className="font-semibold">{m.company}</span>
+                        <span className="text-slate-600">•</span>
+                        <span className="text-indigo-400 font-medium">{m.location}</span>
+                      </div>
                     </div>
 
                     {/* Matched skills tags */}

@@ -114,26 +114,49 @@ def analyze_ats(parsed_resume: Dict[str, Any]) -> Dict[str, Any]:
         print(f"Using mock ATS evaluator due to AI error/absence: {e}")
         return get_mock_ats_analysis(parsed_resume)
 
-def match_jobs(skills: List[str]) -> List[Dict[str, Any]]:
+def match_jobs(skills: List[str], location_filter: str = "All") -> List[Dict[str, Any]]:
     """
-    Matches candidate skills against mock jobs and returns match score and missing skills.
+    Matches candidate skills against mock jobs worldwide, filtering by the selected location.
     """
-    # Define some standard target job roles
+    # Expanded international jobs database
     jobs = [
-        {"job_title": "Software Engineer Intern", "company": "Google", "skills": ["Python", "React", "NodeJS", "Docker", "AWS", "SQL"], "job_board": "LinkedIn"},
-        {"job_title": "Frontend Engineer", "company": "Microsoft", "skills": ["TypeScript", "React", "Next.js", "Tailwind CSS", "Redux", "Testing"], "job_board": "Wellfound"},
-        {"job_title": "Backend Developer", "company": "Amazon", "skills": ["Java", "Spring Boot", "AWS", "PostgreSQL", "Docker", "Redis", "Python"], "job_board": "Naukri"},
-        {"job_title": "Full Stack Engineer", "company": "Vercel", "skills": ["TypeScript", "Next.js", "NodeJS", "React", "Tailwind CSS", "PostgreSQL", "Prisma"], "job_board": "Lever"},
-        {"job_title": "AI/ML Developer", "company": "OpenAI", "skills": ["Python", "PyTorch", "Transformers", "FastAPI", "Docker", "ChromaDB", "Pinecone"], "job_board": "Greenhouse"},
-        {"job_title": "Web Development Intern", "company": "Internshala Startup", "skills": ["JavaScript", "HTML", "CSS", "React", "NodeJS", "MongoDB"], "job_board": "Internshala"}
+        # United States
+        {"job_title": "Software Engineer Intern", "company": "Google", "location": "Silicon Valley, USA", "skills": ["Python", "React", "NodeJS", "Docker", "AWS", "SQL"], "job_board": "LinkedIn"},
+        {"job_title": "Frontend Engineer", "company": "Microsoft", "location": "Redmond, USA", "skills": ["TypeScript", "React", "Next.js", "Tailwind CSS", "Redux", "Testing"], "job_board": "Wellfound"},
+        {"job_title": "Full Stack Developer", "company": "Stripe", "location": "San Francisco, USA", "skills": ["Ruby", "React", "TypeScript", "SQL", "REST APIs"], "job_board": "Wellfound"},
+        
+        # China
+        {"job_title": "Frontend Intern", "company": "Tencent", "location": "Shenzhen, China", "skills": ["JavaScript", "React", "CSS", "TypeScript", "NodeJS"], "job_board": "LinkedIn"},
+        {"job_title": "Cloud Dev Intern", "company": "Alibaba", "location": "Hangzhou, China", "skills": ["Java", "Docker", "Kubernetes", "Linux", "Go"], "job_board": "Greenhouse"},
+        {"job_title": "Algorithm Engineer", "company": "ByteDance", "location": "Beijing, China", "skills": ["Python", "PyTorch", "Machine Learning", "C++", "SQL"], "job_board": "Lever"},
+        
+        # India
+        {"job_title": "Backend Developer", "company": "Flipkart", "location": "Bangalore, India", "skills": ["Java", "Spring Boot", "AWS", "PostgreSQL", "Docker", "Redis", "Python"], "job_board": "Naukri"},
+        {"job_title": "Full Stack Intern", "company": "TCS", "location": "Mumbai, India", "skills": ["JavaScript", "HTML", "CSS", "React", "NodeJS", "MongoDB"], "job_board": "Internshala"},
+        {"job_title": "Python Developer", "company": "Infosys", "location": "Hyderabad, India", "skills": ["Python", "Django", "SQL", "Git", "REST APIs"], "job_board": "Naukri"},
+        
+        # Germany
+        {"job_title": "Software Engineer", "company": "SAP", "location": "Walldorf, Germany", "skills": ["Java", "Spring Boot", "Docker", "SQL", "Kubernetes", "REST APIs"], "job_board": "LinkedIn"},
+        {"job_title": "IoT Developer Intern", "company": "Siemens", "location": "Munich, Germany", "skills": ["C++", "Python", "Linux", "Git", "Docker"], "job_board": "Greenhouse"},
+        
+        # United Kingdom
+        {"job_title": "React Developer", "company": "Deliveroo", "location": "London, UK", "skills": ["TypeScript", "React", "Next.js", "NodeJS", "Docker"], "job_board": "Wellfound"},
+        {"job_title": "Embedded Systems Intern", "company": "ARM", "location": "Cambridge, UK", "skills": ["C", "C++", "Assembly", "Git", "Linux"], "job_board": "Lever"},
+        
+        # Japan
+        {"job_title": "PlayStation Engineer", "company": "Sony", "location": "Tokyo, Japan", "skills": ["C++", "C#", "Unity", "Shaders", "Git"], "job_board": "LinkedIn"},
+        {"job_title": "iOS Developer Intern", "company": "Mercari", "location": "Tokyo, Japan", "skills": ["Swift", "Objective-C", "iOS", "Git", "REST APIs"], "job_board": "Wellfound"}
     ]
     
+    # Filter by location if specified
+    if location_filter and location_filter.lower() != "all":
+        jobs = [j for j in jobs if location_filter.lower() in j["location"].lower()]
+        
     results = []
     user_skills_lower = [s.lower() for s in skills]
     
     for job in jobs:
         job_skills = job["skills"]
-        job_skills_lower = [js.lower() for js in job_skills]
         
         matched = []
         missing = []
@@ -149,6 +172,7 @@ def match_jobs(skills: List[str]) -> List[Dict[str, Any]]:
         results.append({
             "job_title": job["job_title"],
             "company": job["company"],
+            "location": job["location"],
             "match_score": match_score,
             "matched_skills": matched,
             "missing_skills": missing,

@@ -35,6 +35,7 @@ class JobMatch(Base):
     missing_skills = Column(JSON, nullable=True)
     matched_skills = Column(JSON, nullable=True)
     job_board = Column(String(100), nullable=True)          # LinkedIn, Wellfound, Internshala, etc.
+    location = Column(String(100), nullable=True)           # e.g., "Shenzhen, China"
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class CareerRoadmap(Base):

@@ -111,14 +111,14 @@ def analyze_resume(resume_id: int, db: Session = Depends(get_db)):
 # --- JOB MATCHING ENGINE ---
 
 @app.post("/api/resume/{resume_id}/job-match", response_model=List[schemas.JobMatchResponse])
-def get_job_matches(resume_id: int, db: Session = Depends(get_db)):
+def get_job_matches(resume_id: int, location: str = "All", db: Session = Depends(get_db)):
     db_resume = db.query(models.Resume).filter(models.Resume.id == resume_id).first()
     if not db_resume:
         raise HTTPException(status_code=404, detail="Resume not found.")
         
     try:
         skills = db_resume.parsed_json.get("skills", [])
-        matches = ai_service.match_jobs(skills)
+        matches = ai_service.match_jobs(skills, location)
         
         saved_matches = []
         # Clear old job matches for this resume to avoid duplicates
@@ -129,6 +129,7 @@ def get_job_matches(resume_id: int, db: Session = Depends(get_db)):
                 resume_id=resume_id,
                 job_title=m["job_title"],
                 company=m["company"],
+                location=m["location"],
                 match_score=m["match_score"],
                 missing_skills=m["missing_skills"],
                 matched_skills=m["matched_skills"],

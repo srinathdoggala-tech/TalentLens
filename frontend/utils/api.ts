@@ -36,8 +36,8 @@ export async function analyzeResume(resumeId: number) {
   return response.json();
 }
 
-export async function getJobMatches(resumeId: number) {
-  const response = await fetch(`${API_BASE_URL}/api/resume/${resumeId}/job-match`, {
+export async function getJobMatches(resumeId: number, location: string = "All") {
+  const response = await fetch(`${API_BASE_URL}/api/resume/${resumeId}/job-match?location=${encodeURIComponent(location)}`, {
     method: "POST",
   });
   if (!response.ok) throw new Error("Failed to run job matching.");
