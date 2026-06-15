@@ -1,36 +1,85 @@
 # 🚀 TalentLens AI
 
+<div align="center">
+
 ### AI-Powered Resume Intelligence, ATS Optimization & Career Roadmap Platform
 
-<p align="center">
+<p>
   <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js" />
-  <img src="https://img.shields.io/badge/FastAPI-0.115-green?style=for-the-badge&logo=fastapi" />
+  <img src="https://img.shields.io/badge/FastAPI-Production-green?style=for-the-badge&logo=fastapi" />
   <img src="https://img.shields.io/badge/OpenAI-GPT--4o-blue?style=for-the-badge&logo=openai" />
   <img src="https://img.shields.io/badge/Gemini-AI-orange?style=for-the-badge&logo=google" />
   <img src="https://img.shields.io/badge/PostgreSQL-Ready-blue?style=for-the-badge&logo=postgresql" />
+  <img src="https://img.shields.io/badge/Status-Live-success?style=for-the-badge" />
 </p>
 
-<p align="center">
-  <b>Upload Resume ➜ Get ATS Score ➜ Recruiter Feedback ➜ Job Matching ➜ Career Roadmap ➜ Interview Preparation</b>
+### Upload Resume ➜ ATS Analysis ➜ Recruiter Feedback ➜ Job Matching ➜ Career Roadmap ➜ Interview Preparation
+
+<p>
+<a href="https://talent-lens-4z4i.vercel.app">
+<img src="https://img.shields.io/badge/🌐 Live Demo-Visit-success?style=for-the-badge">
+</a>
+
+<a href="https://github.com/srinathdoggala-tech/TalentLens">
+<img src="https://img.shields.io/badge/📂 GitHub-Repository-black?style=for-the-badge">
+</a>
 </p>
+
+</div>
 
 ---
 
-## ✨ Overview
+# 🌟 Overview
 
-TalentLens AI is a next-generation career intelligence platform that helps students and professionals optimize their resumes, identify skill gaps, match with relevant internships/jobs, and build personalized learning roadmaps.
+TalentLens AI is a next-generation AI-powered career intelligence platform designed to help students, job seekers, and professionals optimize their resumes, improve ATS performance, identify skill gaps, discover matching opportunities, and prepare for interviews.
 
-Unlike traditional ATS checkers, TalentLens simulates a Senior Google Recruiter, evaluates resume quality, predicts interview questions, and provides AI-powered recommendations to maximize hiring potential.
+Unlike traditional ATS checkers, TalentLens goes beyond resume scoring by simulating recruiter evaluations, generating personalized career roadmaps, predicting interview questions, and providing actionable recommendations powered by Generative AI.
+
+The platform acts as a personal career copilot that helps candidates bridge the gap between their current profile and their dream role.
 
 ---
 
-## 🎥 Demo
+# 🌐 Live Demo
 
+### 🚀 Production Deployment
+
+**Live Application:**
+https://talent-lens-4z4i.vercel.app
+
+### Source Code
+
+**GitHub Repository:**
+https://github.com/srinathdoggala-tech/TalentLens
+
+---
+
+# 🎯 Problem Statement
+
+Every year, millions of candidates apply to internships and jobs without understanding:
+
+* Why their resume gets rejected
+* Which skills they are missing
+* How recruiters evaluate their profile
+* Which jobs actually match their background
+* How to prepare for interviews effectively
+
+TalentLens AI solves these challenges through a unified AI-powered platform that combines ATS analysis, recruiter simulation, job matching, skill-gap detection, interview preparation, and career planning.
+
+---
+
+# 🎥 Demo
+
+> Add your project GIF here
+
+```markdown
+/assets/demo.gif
+```
+
+```html
 <p align="center">
-  <img src="./assets/demo.gif" width="900"/>
+  <img src="./assets/demo.gif" width="1000"/>
 </p>
-
-> Replace the GIF above with your project demo.
+```
 
 ---
 
@@ -38,15 +87,21 @@ Unlike traditional ATS checkers, TalentLens simulates a Senior Google Recruiter,
 
 ## 📄 Smart Resume Parsing
 
-Upload PDF or DOCX resumes and instantly extract:
+Upload resumes in PDF or DOCX format and instantly extract:
 
 * Skills
 * Projects
 * Education
 * Experience
 * Certifications
+* Contact Information
 
-Powered by:
+### Supported Formats
+
+* PDF
+* DOCX
+
+### Technologies Used
 
 * PyMuPDF
 * pdfplumber
@@ -56,9 +111,16 @@ Powered by:
 
 ## 🎯 ATS Resume Scoring
 
-Receive a comprehensive ATS evaluation.
+Evaluate resume quality based on:
 
-Example:
+* ATS Compatibility
+* Formatting
+* Keywords
+* Project Quality
+* Achievement Metrics
+* Missing Sections
+
+### Example Output
 
 ```yaml
 ATS Score: 84/100
@@ -76,11 +138,19 @@ Recommendations:
 
 ---
 
-## 👨‍💼 Senior Google Recruiter Simulation
+## 👨‍💼 Senior Recruiter Simulation
 
-Get AI-generated recruiter feedback.
+Simulates recruiter-level screening.
 
-Example:
+Provides:
+
+* Shortlisting decision
+* Resume strengths
+* Resume weaknesses
+* Missing skills
+* Recruiter recommendations
+
+### Example
 
 ```yaml
 Shortlist Decision: No
@@ -95,35 +165,36 @@ Reasons:
 
 ## ✨ AI Bullet Point Enhancer
 
-Transform weak bullets into recruiter-friendly achievements.
+Transforms weak resume content into impact-driven achievements.
 
-Before:
+### Before
 
 ```text
 Built a web application
 ```
 
-After:
+### After
 
 ```text
-Built a scalable React-based web application serving 500+ users, reducing page load time by 40%.
+Built a scalable React-based web application serving 500+ users and reducing page load time by 40%.
 ```
 
 ---
 
-## 🎯 Job Matching Engine
+## 🎯 Intelligent Job Matching Engine
 
-Match resumes against:
+Matches candidates against opportunities from:
 
 * LinkedIn
 * Wellfound
 * Naukri
 * Internshala
 
-Example:
+### Output
 
 ```yaml
 Software Engineer Intern
+
 Match Score: 92%
 
 Missing Skills:
@@ -136,7 +207,9 @@ Missing Skills:
 
 ## 📊 Skill Gap Analysis
 
-Identify skills needed to reach target roles.
+Identifies the exact skills needed to achieve a target role.
+
+### Example
 
 ```yaml
 Current Skills:
@@ -154,11 +227,14 @@ Missing Skills:
 
 ## 📝 Resume Tailoring
 
-Paste a Job Description and generate:
+Customize resumes for specific Job Descriptions.
 
-* Optimized Resume
+Features:
+
 * Keyword Alignment
-* Improved Project Summaries
+* ATS Optimization
+* Project Rewriting
+* Resume Enhancement
 
 ---
 
@@ -166,36 +242,43 @@ Paste a Job Description and generate:
 
 Generate personalized cover letters instantly.
 
-```yaml
-Input:
-- Resume
-- Job Description
+### Input
 
-Output:
-- ATS-friendly Cover Letter
+```yaml
+Resume
+Job Description
+```
+
+### Output
+
+```yaml
+ATS-Friendly Cover Letter
 ```
 
 ---
 
-## 🗺️ Career Roadmaps
+## 🗺️ Interactive Career Roadmaps
 
-Generate visual learning paths.
+Create personalized career paths.
+
+### Example
 
 ```text
 Current:
 Student
 
 Goal:
-Google SWE
+Google Software Engineer
 
 Roadmap:
+
 DSA
  ↓
-Full Stack
+Full Stack Development
  ↓
 Open Source
  ↓
-Cloud
+Cloud Computing
  ↓
 System Design
  ↓
@@ -211,12 +294,13 @@ Generate:
 * HR Questions
 * Technical Questions
 * Project-Based Questions
+* Behavioral Questions
 
-With expert-level sample answers.
+Includes expert-level sample answers.
 
 ---
 
-# 🏗️ Architecture
+# 🏗️ System Architecture
 
 ```text
 Resume Upload
@@ -234,10 +318,10 @@ ATS Analyzer
 Recruiter Simulator
       │
       ▼
-Job Matcher
+Job Matching Engine
       │
       ▼
-Gap Analysis
+Skill Gap Analysis
       │
       ▼
 Career Roadmap Generator
@@ -248,30 +332,67 @@ Interview Predictor
 
 ---
 
-# ⚙️ Tech Stack
+# 📸 Screenshots
+
+Add screenshots for better recruiter engagement.
+
+### Dashboard
+
+```markdown
+/screenshots/dashboard.png
+```
+
+### ATS Analysis
+
+```markdown
+/screenshots/ats-analysis.png
+```
+
+### Job Matching
+
+```markdown
+/screenshots/job-matching.png
+```
+
+### Career Roadmap
+
+```markdown
+/screenshots/roadmap.png
+```
+
+### Interview Predictor
+
+```markdown
+/screenshots/interview.png
+```
+
+---
+
+# ⚙️ Technology Stack
 
 ## Frontend
 
-* Next.js 16
+* Next.js 15/16
+* React
 * Tailwind CSS v4
 * Shadcn UI
 * Recharts
-* Lucide Icons
+* Lucide React
 
 ## Backend
 
 * FastAPI
-* Python 3.12
+* Python 3.12+
 * SQLAlchemy
-* PostgreSQL
 * SQLite
+* PostgreSQL
 
 ## AI Layer
 
 * OpenAI API
 * Google Gemini API
 
-## Resume Parsing
+## Resume Processing
 
 * PyMuPDF
 * pdfplumber
@@ -290,13 +411,24 @@ TalentLens/
 │   ├── models.py
 │   ├── schemas.py
 │   ├── parser.py
-│   └── ai_service.py
+│   ├── ai_service.py
+│   └── requirements.txt
 │
 ├── frontend/
 │   ├── app/
 │   ├── components/
 │   ├── utils/
 │   └── package.json
+│
+├── assets/
+│   └── demo.gif
+│
+├── screenshots/
+│   ├── dashboard.png
+│   ├── ats-analysis.png
+│   ├── job-matching.png
+│   ├── roadmap.png
+│   └── interview.png
 │
 ├── run_talentlens.bat
 └── talentlens.db
@@ -306,15 +438,27 @@ TalentLens/
 
 # 🚀 Getting Started
 
-## Backend
+## Clone Repository
+
+```bash
+git clone https://github.com/srinathdoggala-tech/TalentLens.git
+
+cd TalentLens
+```
+
+---
+
+## Backend Setup
 
 ```bash
 cd backend
+
 pip install -r requirements.txt
+
 uvicorn main:app --reload
 ```
 
-Backend:
+Backend URL:
 
 ```bash
 http://127.0.0.1:8000
@@ -322,15 +466,17 @@ http://127.0.0.1:8000
 
 ---
 
-## Frontend
+## Frontend Setup
 
 ```bash
 cd frontend
+
 npm install
+
 npm run dev
 ```
 
-Frontend:
+Frontend URL:
 
 ```bash
 http://localhost:8080
@@ -340,6 +486,8 @@ http://localhost:8080
 
 # 🔑 Environment Variables
 
+Create a `.env` file inside `backend/`
+
 ```env
 OPENAI_API_KEY=your_openai_key
 
@@ -348,46 +496,68 @@ GEMINI_API_KEY=your_gemini_key
 DATABASE_URL=postgresql://user:password@localhost:5432/talentlens
 ```
 
+If no API keys are provided, TalentLens automatically falls back to a simulated AI engine for demonstration purposes.
+
 ---
 
 # 📈 Future Enhancements
 
 * Resume Version Control
 * GitHub Profile Analyzer
-* LinkedIn Optimization Engine
+* LinkedIn Profile Scoring
 * AI Mock Interviews
 * Real-Time Job Alerts
-* Salary Prediction Model
-* Resume Benchmarking Against Top Candidates
+* Salary Prediction Engine
+* Resume Benchmarking
+* Portfolio Analysis
+* Recruiter Dashboard
+* Multi-Language Resume Support
 
 ---
 
 # 🌟 Why TalentLens?
 
-TalentLens doesn't just review resumes.
+TalentLens is more than an ATS checker.
 
 It acts as:
 
-✅ ATS Checker
-✅ Recruiter Simulator
-✅ Career Coach
-✅ Job Matching Engine
-✅ Interview Preparation Assistant
-✅ Roadmap Generator
+✅ ATS Resume Analyzer
 
-Helping candidates bridge the gap between where they are today and their dream role.
+✅ Recruiter Simulator
+
+✅ Career Coach
+
+✅ Job Matching Engine
+
+✅ Skill Gap Analyzer
+
+✅ Interview Preparation Assistant
+
+✅ Cover Letter Generator
+
+✅ Career Roadmap Builder
+
+Helping candidates maximize their chances of landing internships and full-time opportunities.
 
 ---
-👨‍💻 Author
 
-Srinath Doggala
+# 👨‍💻 Author
+
+## Srinath Doggala
 
 Computer Science Engineer | AI/ML Enthusiast | Full-Stack Developer
 
-GitHub: https://github.com/srinathdoggala-tech
-Project Repository: https://github.com/srinathdoggala-tech/TalentLens
-Live Application: https://talent-lens-4z4i.vercel.app
-⭐ Support
+### Connect
+
+🔗 GitHub: https://github.com/srinathdoggala-tech
+
+🔗 Project Repository: https://github.com/srinathdoggala-tech/TalentLens
+
+🌐 Live Application: https://talent-lens-4z4i.vercel.app
+
+---
+
+# ⭐ Support
 
 If you found TalentLens useful:
 
@@ -399,6 +569,12 @@ If you found TalentLens useful:
 
 📢 Share it with your network
 
-<p align="center">
-  Built with ❤️ by Srinath
-</p>
+---
+
+<div align="center">
+
+### Built with ❤️ by Srinath Doggala
+
+**TalentLens AI — Turning Resumes into Opportunities**
+
+</div>
