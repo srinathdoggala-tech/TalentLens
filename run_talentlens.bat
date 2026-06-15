@@ -5,7 +5,7 @@ echo ===================================================
 
 :: Start backend in a new window
 echo Starting FastAPI Backend on port 8000...
-start "TalentLens Backend" cmd /k ".\backend\venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000"
+start "TalentLens Backend" cmd /k "backend\venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000"
 
 :: Start frontend in a new window
 echo Starting Next.js Frontend on port 8080...
