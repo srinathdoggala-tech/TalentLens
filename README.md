@@ -378,6 +378,26 @@ It acts as:
 Helping candidates bridge the gap between where they are today and their dream role.
 
 ---
+👨‍💻 Author
+
+Srinath Doggala
+
+Computer Science Engineer | AI/ML Enthusiast | Full-Stack Developer
+
+GitHub: https://github.com/srinathdoggala-tech
+Project Repository: https://github.com/srinathdoggala-tech/TalentLens
+Live Application: https://talent-lens-4z4i.vercel.app
+⭐ Support
+
+If you found TalentLens useful:
+
+⭐ Star the repository
+
+🍴 Fork the project
+
+🛠️ Contribute new features
+
+📢 Share it with your network
 
 <p align="center">
   Built with ❤️ by Srinath
