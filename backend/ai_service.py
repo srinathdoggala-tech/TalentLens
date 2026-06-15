@@ -246,21 +246,288 @@ def tailor_resume_and_cover_letter(parsed_resume: Dict[str, Any], job_descriptio
 
 def get_mock_parsed_resume(raw_text: str) -> Dict[str, Any]:
     """
-    Extracts core details from text using regex/splitting or returns a robust default resume.
+    Extracts core details from text using regex/splitting and heuristics when LLMs are not configured.
     """
-    # Simple regex fallback to extract name/email/skills if possible
-    skills = []
-    known_skills = ["Python", "React", "NodeJS", "JavaScript", "HTML", "CSS", "TypeScript", "SQL", "Docker", "AWS", "Git", "Java", "C++", "Machine Learning", "Deep Learning", "TensorFlow", "PyTorch"]
-    for skill in known_skills:
-        if re.search(r'\b' + re.escape(skill) + r'\b', raw_text, re.IGNORECASE):
-            skills.append(skill)
+    lines = [line.strip() for line in raw_text.split('\n') if line.strip()]
+    
+    skills_headers = ["skills", "technical skills", "technologies", "key skills", "core competencies", "skills & tools", "programming languages", "areas of expertise"]
+    experience_headers = ["experience", "work experience", "professional experience", "employment history", "employment", "work history", "internships", "internship", "professional background"]
+    projects_headers = ["projects", "personal projects", "academic projects", "key projects", "selected projects", "academic work", "relevant projects"]
+    education_headers = ["education", "academic background", "academic history", "educational background", "academic qualifications", "qualifications", "academic credentials"]
+    certifications_headers = ["certifications", "licenses", "certifications & licenses", "courses", "certification", "credentials", "professional certifications"]
+
+    def clean_header(line: str) -> str:
+        s = line.lower().strip(":-•*•# ").strip()
+        return s
+
+    def get_section(line: str) -> str:
+        s = clean_header(line)
+        if s in skills_headers: return "skills"
+        if s in experience_headers: return "experience"
+        if s in projects_headers: return "projects"
+        if s in education_headers: return "education"
+        if s in certifications_headers: return "certifications"
+        
+        # Try fuzzy matching: check if line starts with these headers
+        for h in skills_headers:
+            if s.startswith(h): return "skills"
+        for h in experience_headers:
+            if s.startswith(h): return "experience"
+        for h in projects_headers:
+            if s.startswith(h): return "projects"
+        for h in education_headers:
+            if s.startswith(h): return "education"
+        for h in certifications_headers:
+            if s.startswith(h): return "certifications"
             
+        return ""
+
+    section_lines = {"skills": [], "experience": [], "projects": [], "education": [], "certifications": [], "unknown": []}
+    current_section = "unknown"
+    for line in lines:
+        sec = get_section(line)
+        if sec:
+            current_section = sec
+        else:
+            section_lines[current_section].append(line)
+
+    # 1. Skills
+    known_skills = [
+        # Programming Languages
+        "Python", "JavaScript", "TypeScript", "Java", "C++", "C#", "Ruby", "PHP", "Go", "Golang", "Rust", "Swift", "Kotlin", 
+        "Scala", "Perl", "R", "Dart", "Haskell", "Julia", "SQL", "HTML", "CSS", "Sass", "Less", "Shell", "Bash", "PowerShell",
+        # Frontend Frameworks & Libraries
+        "React", "Vue", "Angular", "Svelte", "Next.js", "NextJS", "Nuxt.js", "NuxtJS", "Gatsby", "Redux", "MobX", "Tailwind", 
+        "Tailwind CSS", "Bootstrap", "Material UI", "Chakra UI", "jQuery", "Webpack", "Vite", "Babel", "HTML5", "CSS3",
+        # Backend Frameworks & Runtimes
+        "Node.js", "NodeJS", "Express", "NestJS", "FastAPI", "Django", "Flask", "Spring Boot", "Spring", "Hibernate", "ASP.NET", 
+        "Laravel", "Rails", "Ruby on Rails", "Koa", "Gin", "Fiber",
+        # Databases & Caching
+        "PostgreSQL", "Postgres", "MySQL", "MongoDB", "Redis", "SQLite", "MariaDB", "Cassandra", "DynamoDB", "Elasticsearch", 
+        "ChromaDB", "Pinecone", "Milvus", "Firebase", "Oracle", "SQL Server", "MSSQL",
+        # Cloud & DevOps
+        "AWS", "Amazon Web Services", "Azure", "GCP", "Google Cloud", "Docker", "Kubernetes", "K8s", "Jenkins", "GitHub Actions", 
+        "GitLab CI", "CircleCI", "Ansible", "Terraform", "Cloudflare", "Heroku", "Vercel", "Netlify", "DigitalOcean",
+        # Machine Learning, AI & Data Science
+        "Machine Learning", "Deep Learning", "Artificial Intelligence", "AI", "NLP", "Natural Language Processing", 
+        "Computer Vision", "PyTorch", "TensorFlow", "Keras", "Scikit-Learn", "Sklearn", "Pandas", "NumPy", "OpenCV", "LLM", 
+        "Large Language Models", "OpenAI", "LangChain", "Hugging Face", "NLTK", "Spacy",
+        # Tools, Methodologies & Design
+        "Git", "GitHub", "GitLab", "Jira", "Trello", "Confluence", "Agile", "Scrum", "REST", "RESTful", "GraphQL", "gRPC", 
+        "WebSockets", "OAuth", "JWT", "Docker Compose", "Unix", "Linux", "System Design", "Microservices"
+    ]
+
+    skills = []
+    user_skills_lower = set()
+    for skill in known_skills:
+        pattern = r'\b' + re.escape(skill) + r'\b'
+        if '+' in skill or '.' in skill or '#' in skill:
+            pattern = re.escape(skill)
+            
+        if re.search(pattern, raw_text, re.IGNORECASE):
+            skill_lower = skill.lower()
+            if skill_lower not in user_skills_lower:
+                skills.append(skill)
+                user_skills_lower.add(skill_lower)
+
+    # Capture custom skills listed by the user
+    for line in section_lines["skills"]:
+        subparts = line.split(":")
+        for sp in subparts:
+            parts = re.split(r'[,;|•*]|\band\b', sp)
+            for part in parts:
+                part_clean = part.strip(":-•*• ").strip()
+                if part_clean and len(part_clean) < 30 and len(part_clean) > 1:
+                    if part_clean.lower() in ["languages", "frontend", "backend", "database", "databases", "tools", "libraries", "frameworks", "technologies", "cloud", "devops", "other"]:
+                        continue
+                    part_lower = part_clean.lower()
+                    if part_lower not in user_skills_lower:
+                        skills.append(part_clean)
+                        user_skills_lower.add(part_lower)
+
     if not skills:
         skills = ["Python", "JavaScript", "React", "NodeJS", "SQL", "Git"]
 
-    return {
-        "skills": skills,
-        "projects": [
+    # Helper function to extract years/ranges
+    def extract_year(text_line: str):
+        # Match range e.g. 2022 - 2026 or 2022 - Present
+        range_match = re.search(r'\b(?:19|20)\d{2}\s*[-–—]\s*(?:(?:19|20)\d{2}|present|current)\b', text_line, re.IGNORECASE)
+        if range_match:
+            return range_match.group(0), range_match
+        
+        # Match two years separately e.g. 2022, 2026
+        two_years = re.findall(r'\b(?:19|20)\d{2}\b', text_line)
+        if len(two_years) >= 2:
+            return f"{two_years[0]} - {two_years[1]}", None
+            
+        # Match single year
+        single_match = re.search(r'\b(?:19|20)\d{2}\b', text_line)
+        if single_match:
+            return single_match.group(0), single_match
+            
+        return "N/A", None
+
+    # 2. Education
+    edu_lines = section_lines["education"]
+    if not edu_lines:
+        edu_lines = [l for l in lines if any(k in l.lower() for k in ["university", "college", "institute", "school", "b.tech", "m.tech", "bachelor", "master", "phd", "degree", "b.s", "m.s"])]
+        
+    education_entries = []
+    i = 0
+    while i < len(edu_lines):
+        line = edu_lines[i]
+        institution = ""
+        degree = ""
+        year = "N/A"
+        
+        year, year_match = extract_year(line)
+        
+        inst_keywords = ["university", "college", "institute", "school", "academy", "iit", "nit", "bits", "iiit", "harvard", "stanford", "mit"]
+        if any(k in line.lower() for k in inst_keywords):
+            institution = line.strip()
+            if year_match:
+                institution = institution.replace(year_match.group(0), "").strip(" ,-()|")
+                
+            if i + 1 < len(edu_lines):
+                next_line = edu_lines[i+1]
+                deg_keywords = ["bachelor", "master", "phd", "b.tech", "m.tech", "b.e", "m.e", "b.s", "m.s", "bsc", "msc", "diploma", "degree", "major"]
+                if any(k in next_line.lower() for k in deg_keywords) and not any(k in next_line.lower() for k in inst_keywords):
+                    degree = next_line.strip()
+                    next_year, next_year_match = extract_year(next_line)
+                    if next_year_match:
+                        year = next_year
+                        degree = degree.replace(next_year_match.group(0), "").strip(" ,-()|")
+                    elif next_year != "N/A" and year == "N/A":
+                        year = next_year
+                    i += 1
+        else:
+            deg_keywords = ["bachelor", "master", "phd", "b.tech", "m.tech", "b.e", "m.e", "b.s", "m.s", "bsc", "msc", "diploma", "degree", "major"]
+            if any(k in line.lower() for k in deg_keywords):
+                degree = line.strip()
+                if year_match:
+                    degree = degree.replace(year_match.group(0), "").strip(" ,-()|")
+                if i + 1 < len(edu_lines):
+                    next_line = edu_lines[i+1]
+                    if any(k in next_line.lower() for k in inst_keywords):
+                        institution = next_line.strip()
+                        next_year, next_year_match = extract_year(next_line)
+                        if next_year_match:
+                            year = next_year
+                            institution = institution.replace(next_year_match.group(0), "").strip(" ,-()|")
+                        elif next_year != "N/A" and year == "N/A":
+                            year = next_year
+                        i += 1
+                        
+        if institution or degree:
+            if not institution:
+                at_match = re.search(r'\b(at|from)\s+([^,.-]+)', degree, re.IGNORECASE)
+                if at_match:
+                    institution = at_match.group(2).strip()
+                    degree = degree.replace(at_match.group(0), "").strip(" ,-()|")
+                else:
+                    institution = "Unknown Institution"
+            if not degree:
+                degree = "Degree / Field of Study"
+            
+            # Clean up trailing characters
+            institution = institution.strip(" ,-()|")
+            degree = degree.strip(" ,-()|")
+            
+            education_entries.append({
+                "institution": institution,
+                "degree": degree,
+                "year": year
+            })
+        i += 1
+        
+    if not education_entries:
+        education_entries = [{
+            "institution": "University / College",
+            "degree": "Degree / Field of Study",
+            "year": "N/A"
+        }]
+
+    # 3. Certifications
+    cert_lines = section_lines["certifications"]
+    certifications = []
+    for line in cert_lines:
+        clean_line = line.strip(":-•*• ").strip()
+        if clean_line and len(clean_line) < 100:
+            certifications.append(clean_line)
+            
+    if not certifications:
+        for line in lines:
+            if "certified" in line.lower() or "certification" in line.lower() or "certificate" in line.lower():
+                clean_line = line.strip(":-•*• ").strip()
+                if clean_line and len(clean_line) < 100 and clean_line not in certifications:
+                    certifications.append(clean_line)
+                    
+    if not certifications:
+        certifications = ["AWS Certified Cloud Practitioner", "Google AI Fundamentals"]
+
+    # 4. Projects
+    projects = []
+    current_project = None
+
+    for line in section_lines["projects"]:
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+            
+        is_bullet = line_stripped.startswith(('-', '*', '•', 'o', '+', '—')) or re.match(r'^\d+\.', line_stripped)
+        words = line_stripped.split()
+        is_title = not is_bullet and len(words) < 15
+        
+        if is_title:
+            if current_project:
+                projects.append(current_project)
+                
+            title = line_stripped.strip(":-•*•# ").strip()
+            techs = []
+            tech_match = re.search(r'[\[(](.*?)[\])]', title)
+            if tech_match:
+                tech_str = tech_match.group(1)
+                title = title.replace(tech_match.group(0), "").strip()
+                techs = [t.strip() for t in re.split(r'[,|/]', tech_str) if t.strip()]
+                
+            current_project = {
+                "title": title,
+                "description": "",
+                "technologies": techs,
+                "bullet_points": []
+            }
+        else:
+            if current_project:
+                clean_bullet = line_stripped.strip(":-•*• ").strip()
+                if clean_bullet:
+                    current_project["bullet_points"].append(clean_bullet)
+            else:
+                current_project = {
+                    "title": "Project Detail",
+                    "description": "",
+                    "technologies": [],
+                    "bullet_points": [line_stripped.strip(":-•*• ").strip()]
+                }
+
+    if current_project:
+        projects.append(current_project)
+        
+    for p in projects:
+        desc_text = " ".join(p["bullet_points"])
+        p["description"] = desc_text if desc_text else "Developed a custom application."
+        
+        for skill in known_skills:
+            pattern = r'\b' + re.escape(skill) + r'\b'
+            if '+' in skill or '.' in skill or '#' in skill:
+                pattern = re.escape(skill)
+            if re.search(pattern, p["title"] + " " + p["description"], re.IGNORECASE):
+                if skill not in p["technologies"]:
+                    p["technologies"].append(skill)
+                    
+        del p["bullet_points"]
+
+    if not projects:
+        projects = [
             {
                 "title": "TalentLens AI",
                 "description": "Built a web application for parsing resumes and generating interview questions.",
@@ -271,15 +538,90 @@ def get_mock_parsed_resume(raw_text: str) -> Dict[str, Any]:
                 "description": "Developed a database-driven e-commerce backend service supporting high load.",
                 "technologies": ["NodeJS", "Express", "PostgreSQL", "Docker"]
             }
-        ],
-        "education": [
-            {
-                "institution": "State Technical University",
-                "degree": "B.Tech in Computer Science",
-                "year": "2027"
+        ]
+
+    # 5. Experience
+    experience = []
+    current_exp = None
+
+    for line in section_lines["experience"]:
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+            
+        is_bullet = line_stripped.startswith(('-', '*', '•', 'o', '+', '—')) or re.match(r'^\d+\.', line_stripped)
+        words = line_stripped.split()
+        is_header = not is_bullet and (
+            any(k in line_stripped.lower() for k in ["engineer", "developer", "intern", "analyst", "lead", "manager", "architect", "designer", "consultant", "specialist"]) or
+            any(k in line_stripped.lower() for k in ["inc", "corp", "ltd", "solutions", "technologies", "tech", "labs", "company", "group", "co"]) or
+            re.search(r'\b(19|20)\d{2}\b', line_stripped)
+        )
+        
+        if is_header and len(words) < 20:
+            if current_exp:
+                experience.append(current_exp)
+                
+            parts = re.split(r'[|—–,-]', line_stripped)
+            parts = [p.strip() for p in parts if p.strip()]
+            
+            company = "Unknown Company"
+            role = "Software Developer"
+            duration = "N/A"
+            
+            date_pattern = r'\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|present|20\d{2})\b'
+            date_parts = []
+            other_parts = []
+            for p in parts:
+                if re.search(date_pattern, p, re.IGNORECASE) or re.search(r'\b20\d{2}\b', p):
+                    date_parts.append(p)
+                else:
+                    other_parts.append(p)
+                    
+            if date_parts:
+                duration = " - ".join(date_parts)
+                
+            if len(other_parts) >= 2:
+                role_keywords = ["engineer", "developer", "intern", "analyst", "lead", "manager", "architect", "designer", "consultant"]
+                p0_role_score = sum(1 for k in role_keywords if k in other_parts[0].lower())
+                p1_role_score = sum(1 for k in role_keywords if k in other_parts[1].lower())
+                
+                if p0_role_score >= p1_role_score:
+                    role = other_parts[0]
+                    company = other_parts[1]
+                else:
+                    role = other_parts[1]
+                    company = other_parts[0]
+            elif len(other_parts) == 1:
+                role_keywords = ["engineer", "developer", "intern", "analyst", "lead", "manager", "architect", "designer", "consultant"]
+                if any(k in other_parts[0].lower() for k in role_keywords):
+                    role = other_parts[0]
+                else:
+                    company = other_parts[0]
+                    
+            current_exp = {
+                "company": company,
+                "role": role,
+                "duration": duration,
+                "achievements": []
             }
-        ],
-        "experience": [
+        else:
+            if current_exp:
+                clean_ach = line_stripped.strip(":-•*• ").strip()
+                if clean_ach:
+                    current_exp["achievements"].append(clean_ach)
+            else:
+                current_exp = {
+                    "company": "Tech Company",
+                    "role": "Developer",
+                    "duration": "N/A",
+                    "achievements": [line_stripped.strip(":-•*• ").strip()]
+                }
+
+    if current_exp:
+        experience.append(current_exp)
+        
+    if not experience:
+        experience = [
             {
                 "company": "Tech Solutions Inc.",
                 "role": "Frontend Intern",
@@ -290,11 +632,14 @@ def get_mock_parsed_resume(raw_text: str) -> Dict[str, Any]:
                     "Collaborated with backend engineers on API contracts."
                 ]
             }
-        ],
-        "certifications": [
-            "AWS Certified Cloud Practitioner",
-            "Google AI Fundamentals"
         ]
+
+    return {
+        "skills": skills,
+        "projects": projects,
+        "education": education_entries,
+        "experience": experience,
+        "certifications": certifications
     }
 
 def get_mock_ats_analysis(parsed: Dict[str, Any]) -> Dict[str, Any]:
