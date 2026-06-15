@@ -22,6 +22,7 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<any>(null);
+  const [isDragActive, setIsDragActive] = useState(false);
   const router = useRouter();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +30,34 @@ export default function UploadPage() {
       setFile(e.target.files[0]);
       setError(null);
       setParsedData(null);
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setIsDragActive(true);
+    } else if (e.type === "dragleave") {
+      setIsDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const droppedFile = e.dataTransfer.files[0];
+      const ext = droppedFile.name.toLowerCase().split('.').pop();
+      if (ext === 'pdf' || ext === 'docx') {
+        setFile(droppedFile);
+        setError(null);
+        setParsedData(null);
+      } else {
+        setError("Unsupported file format. Please upload a PDF or DOCX file.");
+      }
     }
   };
 
@@ -75,7 +104,15 @@ export default function UploadPage() {
 
             <form onSubmit={handleUpload} className="space-y-6">
               {/* Dropzone container */}
-              <div className="relative border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-2xl p-8 transition-colors text-center cursor-pointer bg-slate-950/20 group">
+              <div 
+                onDragEnter={handleDrag}
+                onDragOver={handleDrag}
+                onDragLeave={handleDrag}
+                onDrop={handleDrop}
+                className={`relative border-2 border-dashed rounded-2xl p-8 transition-colors text-center cursor-pointer bg-slate-950/20 group ${
+                  isDragActive ? "border-indigo-500 bg-indigo-500/10 shadow-lg shadow-indigo-500/5" : "border-slate-800 hover:border-indigo-500/50"
+                }`}
+              >
                 <input
                   type="file"
                   accept=".pdf,.docx"
@@ -84,8 +121,12 @@ export default function UploadPage() {
                   disabled={loading}
                 />
                 <div className="space-y-4">
-                  <div className="p-3 bg-slate-900 rounded-2xl w-fit mx-auto border border-slate-800 group-hover:border-indigo-500/30 group-hover:bg-indigo-600/5 transition-all">
-                    <FileText className="h-8 w-8 text-slate-400 group-hover:text-indigo-400" />
+                  <div className={`p-3 bg-slate-900 rounded-2xl w-fit mx-auto border transition-all ${
+                    isDragActive ? "border-indigo-500 bg-indigo-600/10" : "border-slate-800 group-hover:border-indigo-500/30 group-hover:bg-indigo-600/5"
+                  }`}>
+                    <FileText className={`h-8 w-8 transition-colors ${
+                      isDragActive ? "text-indigo-400" : "text-slate-400 group-hover:text-indigo-400"
+                    }`} />
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-white">
